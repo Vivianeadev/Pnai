@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>PNAI · Portal Universitário · IDEnza</title>
+    <style>
+        :root {
+            --bg: #ffffff;
+            --surface: #f8f9fc;
+            --text: #0a0f1c;
+            --text-soft: #4a5568;
+            --border: #d0d5e0;
+            --gold: #b68b40;
+            --gold-light: #e5c687;
+            --imperial: #10192b;
+            --accent: #1e3a5f;
+            --radius: 6px;
+            --font-mono: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            padding: 2rem;
+            line-height: 1.4;
+        }
+        .container {
+            max-width: 1300px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .imperial-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid var(--gold);
+            padding-bottom: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .imperial-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+            color: var(--imperial);
+        }
+        .imperial-title .emblem { font-size: 2.2rem; color: var(--gold); }
+        .subtitle {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--gold);
+            font-weight: 500;
+        }
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+        .tab {
+            padding: 0.6rem 1.2rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            border-radius: var(--radius) var(--radius) 0 0;
+            border: 1px solid transparent;
+            background: transparent;
+            transition: 0.2s;
+            color: var(--text-soft);
+        }
+        .tab.active {
+            background: var(--imperial);
+            color: white;
+            border-color: var(--imperial);
+        }
+        .main {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+        .panel-title {
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--accent);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .field label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            color: var(--text-soft);
+        }
+        .field input, .field textarea, .field select {
+            padding: 0.6rem 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            background: white;
+            transition: 0.15s;
+            width: 100%;
+        }
+        .field input:focus, .field textarea:focus, .field select:focus {
+            border-color: var(--gold);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(182,139,64,0.2);
+        }
+        .btn {
+            background: var(--imperial);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.8rem;
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid transparent;
+            align-self: flex-start;
+        }
+        .btn:hover {
+            background: white;
+            color: var(--imperial);
+            border-color: var(--gold);
+        }
+        .btn-gold { background: var(--gold); color: white; }
+        .btn-gold:hover { background: white; color: var(--gold); border-color: var(--gold); }
+        .btn:disabled { opacity:0.5; cursor:not-allowed; }
+        .badge {
+            display: inline-block;
+            background: var(--gold);
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+        .master-output {
+            background: var(--imperial);
+            color: #e2e8f0;
+            padding: 1.2rem;
+            border-radius: var(--radius);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            max-height: 250px;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+        .agents-log {
+            background: #f0f4fc;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 0.8rem;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+        .ranking-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+        .ranking-table th, .ranking-table td {
+            text-align: left;
+            padding: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .ranking-table th { background: var(--surface); font-weight: 600; }
+        .student-card {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .footer-manual {
+            border-top: 2px solid var(--gold);
+            padding: 1.5rem 0;
+            font-size: 0.75rem;
+            color: var(--text-soft);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+        .footer-manual h4 {
+            font-size: 0.8rem;
+            color: var(--imperial);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+        .disclaimer {
+            grid-column: 1 / -1;
+            background: var(--surface);
+            padding: 1rem;
+            border-radius: var(--radius);
+            border-left: 4px solid var(--gold);
+        }
+        @media (max-width: 600px) {
+            .imperial-title { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="imperial-header">
+        <div class="imperial-title">
+            <span class="emblem">⬡</span> PNAI <span style="font-weight:400; font-size:1rem;">· Portal Universitário</span>
+        </div>
+        <div class="subtitle">Universidade & Alunos · Programa de Compiladores Certificados</div>
+    </div>
+
+    <!-- Abas de perfil -->
+    <div class="tabs">
+        <div class="tab active" data-tab="university">🏛️ Universidade (NIT)</div>
+        <div class="tab" data-tab="student">🎓 Aluno Compilador</div>
+        <div class="tab" data-tab="ranking">🏆 Ranking de Compiladores</div>
+    </div>
+
+    <!-- Conteúdo das abas -->
+    <div class="main" id="tabContent">
+        <!-- Painel Universidade (ativo por padrão) -->
+        <div id="universityPanel">
+            <div class="grid-2">
+                <div class="panel">
+                    <div class="panel-title">📋 Compilar Ativo da Universidade</div>
+                    <div class="field">
+                        <label>Nome do Ativo</label>
+                        <input type="text" id="uniAssetName" placeholder="Ex: Biochip para detecção de dengue">
+                    </div>
+                    <div class="field">
+                        <label>Tipo de Ativo</label>
+                        <select id="uniAssetType">
+                            <option>Patente</option><option>Software</option><option>Patente + Software</option>
+                            <option>Dataset</option><option>Modelo de IA</option><option>Know-how</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Unidade / Departamento</label>
+                        <input type="text" id="uniDept" placeholder="Ex.: Instituto de Biotecnologia">
+                    </div>
+                    <div class="field">
+                        <label>Pesquisador Responsável</label>
+                        <input type="text" id="uniResearcher" placeholder="Nome do professor ou orientador">
+                    </div>
+                    <div class="field">
+                        <label>Resumo Técnico</label>
+                        <textarea id="uniSummary" rows="2">Dispositivo microfluídico para diagnóstico rápido de dengue com inteligência artificial embarcada.</textarea>
+                    </div>
+                    <button class="btn btn-gold" id="uniCompileBtn">⚡ Compilar com Agentes IA</button>
+                    <div class="agents-log" id="uniAgentsLog" style="display:none;"></div>
+                    <div id="uniCompileResult" class="master-output" style="display:none;"></div>
+                </div>
+                <div class="panel">
+                    <div class="panel-title">📜 Certidões e Últimos Registros</div>
+                    <div class="field">
+                        <label>Buscar por ID do Registro</label>
+                        <input type="text" id="uniSearchId" placeholder="PNAI-2026-...">
+                    </div>
+                    <button class="btn" id="uniCertBtn">Emitir Certidão</button>
+                    <div id="uniCertOutput" class="master-output" style="display:none;"></div>
+                    <div style="margin-top:1rem;">
+                        <strong style="font-size:0.8rem;">Registros recentes da universidade:</strong>
+                        <ul id="uniHistoryList" style="font-size:0.75rem; margin-top:0.5rem;"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Painel Aluno (oculto) -->
+        <div id="studentPanel" style="display:none;">
+            <div class="grid-2">
+                <div class="panel">
+                    <div class="panel-title">🎓 Registro do Aluno Compilador</div>
+                    <div class="field">
+                        <label>Nome completo</label>
+                        <input type="text" id="stuName" placeholder="Seu nome">
+                    </div>
+                    <div class="field">
+                        <label>Matrícula / CPF</label>
+                        <input type="text" id="stuId" placeholder="Número de matrícula">
+                    </div>
+                    <div class="field">
+                        <label>Curso / Departamento</label>
+                        <input type="text" id="stuCourse" placeholder="Ex.: Engenharia de Computação">
+                    </div>
+                    <button class="btn btn-gold" id="stuRegisterBtn">Registrar como Compilador Nível 1</button>
+                    <div id="stuRegisterFeedback" style="font-size:0.8rem;"></div>
+                </div>
+                <div class="panel">
+                    <div class="panel-title">📝 Compilar Meu Projeto (TCC/IC)</div>
+                    <div class="field">
+                        <label>Título do Projeto</label>
+                        <input type="text" id="stuProjectTitle" placeholder="Ex.: App de monitoramento de sono">
+                    </div>
+                    <div class="field">
+                        <label>Tipo</label>
+                        <select id="stuProjectType">
+                            <option>Software</option><option>Patente</option><option>Dataset</option><option>Modelo de IA</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Resumo</label>
+                        <textarea id="stuProjectSummary" rows="2">Aplicativo mobile que analisa padrões de sono usando machine learning.</textarea>
+                    </div>
+                    <button class="btn" id="stuCompileBtn">Compilar e Obter Selo de Estudante</button>
+                    <div id="stuCompileResult" class="master-output" style="display:none;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Painel Ranking (oculto) -->
+        <div id="rankingPanel" style="display:none;">
+            <div class="panel">
+                <div class="panel-title">🏆 Top Compiladores Universitários</div>
+                <table class="ranking-table" id="rankingTable">
+                    <thead>
+                        <tr><th>#</th><th>Aluno</th><th>Curso</th><th>Registros Compilados</th><th>ICI Médio</th><th>Pontos</th></tr>
+                    </thead>
+                    <tbody id="rankingBody">
+                        <tr><td colspan="6">Nenhum compilador registrado ainda.</td></tr>
+                    </tbody>
+                </table>
+                <div style="font-size:0.7rem; margin-top:0.5rem; color:var(--text-soft);">
+                    Pontuação: 10 pts por registro próprio, 5 pts por colaboração em registro da universidade. ICI > 80% dobra os pontos.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rodapé -->
+    <footer class="footer-manual">
+        <div>
+            <h4>📘 Programa de Compiladores Certificados</h4>
+            <ol style="padding-left:1.2rem;">
+                <li>Alunos se registram e realizam o treinamento rápido (simulado aqui).</li>
+                <li>Compilam seus próprios projetos ou auxiliam o NIT.</li>
+                <li>Acumulam pontos e sobem de nível: N1 → N2 → N3 (Agente de Valuation).</li>
+                <li>Recebem certificado digital da IDEnza ao final do semestre.</li>
+            </ol>
+        </div>
+        <div>
+            <h4>🏛️ Parceria com a Universidade</h4>
+            <ul>
+                <li>12 meses de acesso gratuito ao portal.</li>
+                <li>Suporte da IDEnza para integração com sistemas internos.</li>
+                <li>Participação no Conselho Curador do PNAI (representante acadêmico).</li>
+            </ul>
+        </div>
+        <div class="disclaimer">
+            <strong>⚠️ Importante:</strong> Esta plataforma é um ambiente de simulação para fins educacionais. A selagem oficial exige o credenciamento da ARS IDEnza e o pagamento dos emolumentos conforme Decreto PNAI.
+        </div>
+        <div style="text-align:right; font-size:0.7rem; grid-column:1/-1;">
+            AVZ PropTech © 2026 · IDEnza ARS · Portal Universitário v1.0
+        </div>
+    </footer>
+</div>
+
+<script>
+    (function() {
+        // Controle de abas
+        const tabs = document.querySelectorAll('.tab');
+        const panels = {
+            university: document.getElementById('universityPanel'),
+            student: document.getElementById('studentPanel'),
+            ranking: document.getElementById('rankingPanel')
+        };
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                tabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                const tabKey = this.dataset.tab;
+                for (let key in panels) {
+                    panels[key].style.display = key === tabKey ? 'block' : 'none';
+                }
+            });
+        });
+
+        // === UNIVERSIDADE ===
+        const uniCompileBtn = document.getElementById('uniCompileBtn');
+        const uniAgentsLog = document.getElementById('uniAgentsLog');
+        const uniCompileResult = document.getElementById('uniCompileResult');
+        const uniSearchId = document.getElementById('uniSearchId');
+        const uniCertBtn = document.getElementById('uniCertBtn');
+        const uniCertOutput = document.getElementById('uniCertOutput');
+        const uniHistoryList = document.getElementById('uniHistoryList');
+
+        function updateUniHistory() {
+            const history = JSON.parse(localStorage.getItem('pnai_uni_history') || '[]');
+            uniHistoryList.innerHTML = '';
+            if (history.length === 0) {
+                uniHistoryList.innerHTML = '<li>Nenhum registro.</li>';
+                return;
+            }
+            history.slice(0,5).forEach(h => {
+                const li = document.createElement('li');
+                li.textContent = `${h.id} - ${h.name} (${h.date})`;
+                uniHistoryList.appendChild(li);
+            });
+        }
+
+        uniCompileBtn.addEventListener('click', function() {
+            const name = document.getElementById('uniAssetName').value.trim();
+            if (!name) { alert('Informe o nome do ativo.'); return; }
+            uniAgentsLog.style.display = 'block';
+            uniAgentsLog.innerHTML = '🔍 Iniciando agentes de IA para valuation...\n';
+            uniCompileBtn.disabled = true;
+            
+            // Simulação dos agentes com delays
+            setTimeout(() => {
+                uniAgentsLog.innerHTML += '⚙️ Árion (VT) ............. concluído: R$ 2.300.000,00\n';
+            }, 800);
+            setTimeout(() => {
+                uniAgentsLog.innerHTML += '📊 Kairós (VC) ........... concluído: R$ 1.850.000,00\n';
+            }, 1500);
+            setTimeout(() => {
+                uniAgentsLog.innerHTML += '🌌 Aurora (VP) ........... concluído: R$ 5.100.000,00\n';
+            }, 2200);
+            setTimeout(() => {
+                uniAgentsLog.innerHTML += '✅ Valuation completo. Gerando Registro Mestre...\n';
+                const id = 'PNAI-' + new Date().getFullYear() + '-' + String(Math.floor(Math.random()*90000)+10000);
+                const dept = document.getElementById('uniDept').value.trim() || 'Não informado';
+                const researcher = document.getElementById('uniResearcher').value.trim() || 'Não informado';
+                const summary = document.getElementById('uniSummary').value.trim();
+                const type = document.getElementById('uniAssetType').value;
+                const master = {
+                    id, name, type, dept, researcher, summary,
+                    vt: 2300000, vc: 1850000, vp: 5100000,
+                    ici: 78, timestamp: new Date().toISOString(),
+                    seloDigital: 'SELO-' + Date.now()
+                };
+                uniCompileResult.style.display = 'block';
+                uniCompileResult.textContent = JSON.stringify(master, null, 2);
+                // Salvar no histórico
+                const history = JSON.parse(localStorage.getItem('pnai_uni_history') || '[]');
+                history.unshift({ id, name, date: new Date().toLocaleDateString('pt-BR') });
+                localStorage.setItem('pnai_uni_history', JSON.stringify(history));
+                updateUniHistory();
+                uniCompileBtn.disabled = false;
+                // Atualiza ranking com pontos para colaboração (simulando que um aluno ajudou)
+                addStudentPoints(null, 5);
+            }, 3000);
+        });
+
+        uniCertBtn.addEventListener('click', function() {
+            const id = uniSearchId.value.trim();
+            if (!id) { alert('Informe o ID.'); return; }
+            const history = JSON.parse(localStorage.getItem('pnai_uni_history') || '[]');
+            const found = history.find(h => h.id === id);
+            uniCertOutput.style.display = 'block';
+            if (found) {
+                uniCertOutput.textContent = `Certidão de Inteiro Teor\nRegistro: ${id}\nAtivo: ${found.name}\nData: ${found.date}\nEmitida por IDEnza ARS (simulação).`;
+            } else {
+                uniCertOutput.textContent = 'Registro não encontrado no histórico local.';
+            }
+        });
+
+        updateUniHistory();
+
+        // === ALUNO ===
+        const stuRegisterBtn = document.getElementById('stuRegisterBtn');
+        const stuRegisterFeedback = document.getElementById('stuRegisterFeedback');
+        const stuCompileBtn = document.getElementById('stuCompileBtn');
+        const stuCompileResult = document.getElementById('stuCompileResult');
+
+        stuRegisterBtn.addEventListener('click', function() {
+            const name = document.getElementById('stuName').value.trim();
+            const id = document.getElementById('stuId').value.trim();
+            if (!name || !id) { alert('Preencha nome e matrícula.'); return; }
+            const student = { name, id, course: document.getElementById('stuCourse').value.trim(), level: 1, points: 0, registrations: 0 };
+            localStorage.setItem('pnai_student_' + id, JSON.stringify(student));
+            stuRegisterFeedback.innerHTML = `✅ Aluno registrado como Compilador Nível 1! Bem-vindo, ${name}.`;
+            updateRanking();
+        });
+
+        stuCompileBtn.addEventListener('click', function() {
+            const title = document.getElementById('stuProjectTitle').value.trim();
+            if (!title) { alert('Informe o título do projeto.'); return; }
+            const studentId = document.getElementById('stuId').value.trim();
+            if (!studentId) { alert('Registre-se primeiro.'); return; }
+            const type = document.getElementById('stuProjectType').value;
+            const summary = document.getElementById('stuProjectSummary').value.trim();
+            const student = JSON.parse(localStorage.getItem('pnai_student_' + studentId));
+            if (!student) { alert('Aluno não registrado. Faça o registro primeiro.'); return; }
+            const record = {
+                title, type, summary,
+                id: 'PNAI-STU-' + Date.now(),
+                timestamp: new Date().toISOString(),
+                student: student.name
+            };
+            stuCompileResult.style.display = 'block';
+            stuCompileResult.textContent = JSON.stringify(record, null, 2);
+            // Adiciona pontos ao aluno
+            addStudentPoints(studentId, 10);
+            updateRanking();
+        });
+
+        function addStudentPoints(studentId, points) {
+            if (!studentId) return; // colaboração anônima não modifica aluno específico
+            const student = JSON.parse(localStorage.getItem('pnai_student_' + studentId));
+            if (student) {
+                student.points = (student.points || 0) + points;
+                student.registrations = (student.registrations || 0) + 1;
+                // Verifica ICI para bônus (simulado: sempre true)
+                if (points === 10 && Math.random() > 0.5) { // 50% de chance de ICI > 80%
+                    student.points += 10; // dobra
+                }
+                localStorage.setItem('pnai_student_' + studentId, JSON.stringify(student));
+            }
+        }
+
+        // === RANKING ===
+        function updateRanking() {
+            const rankingBody = document.getElementById('rankingBody');
+            let students = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('pnai_student_')) {
+                    try {
+                        const s = JSON.parse(localStorage.getItem(key));
+                        students.push(s);
+                    } catch(e) {}
+                }
+            }
+            students.sort((a,b) => b.points - a.points);
+            rankingBody.innerHTML = '';
+            if (students.length === 0) {
+                rankingBody.innerHTML = '<tr><td colspan="6">Nenhum compilador registrado ainda.</td></tr>';
+                return;
+            }
+            students.forEach((s, idx) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${idx+1}</td><td>${s.name}</td><td>${s.course || '-'}</td><td>${s.registrations || 0}</td><td>${Math.floor(Math.random()*20)+70}%</td><td>${s.points}</td>`;
+                rankingBody.appendChild(row);
+            });
+        }
+        updateRanking();
+    })();
+</script>
+</body>
+</html>
