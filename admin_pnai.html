@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>PNAI · Portal de Solicitações · Agentes Públicos e Bancos Credenciados</title>
+    <style>
+        :root {
+            --bg: #ffffff;
+            --surface: #f8f9fc;
+            --text: #0a0f1c;
+            --text-soft: #4a5568;
+            --border: #d0d5e0;
+            --gold: #b68b40;
+            --gold-light: #e5c687;
+            --imperial: #10192b;
+            --accent: #1e3a5f;
+            --radius: 6px;
+            --font-mono: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            padding: 2rem;
+            line-height: 1.4;
+        }
+        .container {
+            max-width: 1300px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .imperial-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid var(--gold);
+            padding-bottom: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .imperial-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+            color: var(--imperial);
+        }
+        .imperial-title .emblem {
+            font-size: 2.2rem;
+            color: var(--gold);
+        }
+        .subtitle {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--gold);
+            font-weight: 500;
+        }
+        .main {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+        .panel-title {
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--accent);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .field label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            color: var(--text-soft);
+        }
+        .field input, .field textarea, .field select {
+            padding: 0.6rem 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            background: white;
+            transition: 0.15s;
+            width: 100%;
+        }
+        .field input:focus, .field textarea:focus, .field select:focus {
+            border-color: var(--gold);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(182,139,64,0.2);
+        }
+        .btn {
+            background: var(--imperial);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.8rem;
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid transparent;
+            align-self: flex-start;
+        }
+        .btn:hover {
+            background: white;
+            color: var(--imperial);
+            border-color: var(--gold);
+        }
+        .btn-gold {
+            background: var(--gold);
+            color: white;
+        }
+        .btn-gold:hover {
+            background: white;
+            color: var(--gold);
+            border-color: var(--gold);
+        }
+        .btn:disabled { opacity:0.5; cursor:not-allowed; }
+        .badge {
+            display: inline-block;
+            background: var(--gold);
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+        .master-output {
+            background: var(--imperial);
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            max-height: 300px;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+        .search-box {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .search-box input {
+            flex: 1;
+        }
+        .suggestions {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            max-height: 150px;
+            overflow-y: auto;
+            font-size: 0.8rem;
+        }
+        .suggestion-item {
+            padding: 0.5rem 0.75rem;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .suggestion-item:hover {
+            background: #f0f4fc;
+            color: var(--accent);
+        }
+        .footer-manual {
+            border-top: 2px solid var(--gold);
+            padding: 1.5rem 0;
+            font-size: 0.75rem;
+            color: var(--text-soft);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+        .footer-manual h4 {
+            font-size: 0.8rem;
+            color: var(--imperial);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+        .disclaimer {
+            grid-column: 1 / -1;
+            background: var(--surface);
+            padding: 1rem;
+            border-radius: var(--radius);
+            border-left: 4px solid var(--gold);
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .user-avatar {
+            background: var(--imperial);
+            color: white;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Cabeçalho com identificação do agente -->
+    <div class="imperial-header">
+        <div class="imperial-title">
+            <span class="emblem">⬡</span> PNAI <span style="font-weight:400; font-size:1rem;">· Portal de Solicitações</span>
+        </div>
+        <div class="subtitle">Agentes Públicos e Instituições Financeiras Credenciadas</div>
+    </div>
+
+    <!-- Simulação de sessão do usuário -->
+    <div class="panel" style="background:white;">
+        <div class="user-info">
+            <div class="user-avatar">AG</div>
+            <div>
+                <strong>Agente Carlos Mendes</strong><br>
+                <span style="font-size:0.7rem; color:var(--text-soft);">BNDES · Matrícula 88421-0 · Unidade de Garantias Intangíveis</span>
+            </div>
+            <div style="margin-left: auto; display: flex; gap: 0.5rem;">
+                <span class="badge">Sessão ativa</span>
+                <button class="btn" style="padding:0.4rem 0.8rem; font-size:0.7rem;" onclick="alert('Sessão encerrada (simulação)')">Sair</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Área principal de solicitações -->
+    <div class="grid-2">
+        <!-- COLUNA 1: Novo Registro ou Busca rápida -->
+        <div class="panel">
+            <div class="panel-title">📋 1. Registrar Ativo Intelectual</div>
+            <div class="field">
+                <label>Buscar ativo pré-cadastrado (opcional)</label>
+                <div class="search-box">
+                    <input type="text" id="searchAsset" placeholder="Nome ou ID do ativo...">
+                    <button class="btn btn-gold" id="searchBtn" style="padding:0.6rem 1rem;">🔍</button>
+                </div>
+                <div class="suggestions" id="suggestionsBox" style="display:none;"></div>
+            </div>
+            <div class="field">
+                <label>Nome do Ativo</label>
+                <input type="text" id="assetName" placeholder="Ex: Sistema de Bioidentificação">
+            </div>
+            <div class="field">
+                <label>Tipo de Ativo</label>
+                <select id="assetType">
+                    <option>Patente + Software</option><option>Software</option><option>Patente</option><option>Dataset</option>
+                    <option>Modelo de IA</option><option>Marca</option><option>Processo Industrial</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>Titular (CNPJ/CPF ou nome)</label>
+                <input type="text" id="owner" placeholder="CNPJ do titular">
+            </div>
+            <div class="field">
+                <label>Número do Pedido de Patente (se aplicável)</label>
+                <input type="text" id="patentApp" placeholder="BR 10 2026 0...">
+            </div>
+            <button class="btn btn-gold" id="quickRegisterBtn">⚡ Compilar & Emitir Selo (Automático)</button>
+            <div id="registerFeedback" style="font-size:0.75rem; color:var(--text-soft);"></div>
+        </div>
+
+        <!-- COLUNA 2: Emissão de certidão e verificação -->
+        <div class="panel">
+            <div class="panel-title">📜 2. Emitir Certidão / Verificar Integridade</div>
+            <div class="field">
+                <label>ID do Registro Mestre (PNAI-...)</label>
+                <input type="text" id="certId" placeholder="PNAI-2026-00042">
+            </div>
+            <div style="display:flex; gap:0.5rem;">
+                <button class="btn" id="emitCertBtn">📄 Emitir Certidão de Inteiro Teor</button>
+                <button class="btn" id="verifyBtn">🔍 Verificar Selo</button>
+            </div>
+            <div style="margin-top:0.5rem;">
+                <label style="font-size:0.7rem; font-weight:600;">Ou faça upload do JSON do Registro Mestre</label>
+                <input type="file" id="jsonUpload" accept=".json" style="font-size:0.7rem;">
+                <button class="btn" id="uploadVerifyBtn" style="margin-top:0.3rem;">Validar Arquivo</button>
+            </div>
+            <div id="certOutput" class="master-output" style="display:none; margin-top:0.5rem;"></div>
+        </div>
+    </div>
+
+    <!-- Histórico de solicitações recentes -->
+    <div class="panel">
+        <div class="panel-title">📋 Solicitações Recentes (últimos 7 dias)</div>
+        <table style="width:100%; border-collapse:collapse; font-size:0.75rem;">
+            <thead>
+                <tr style="background:var(--surface); border-bottom:2px solid var(--border);">
+                    <th style="text-align:left; padding:0.5rem;">Data/Hora</th>
+                    <th style="text-align:left;">ID Registro</th>
+                    <th style="text-align:left;">Ativo</th>
+                    <th style="text-align:left;">Tipo</th>
+                    <th style="text-align:left;">Status</th>
+                </tr>
+            </thead>
+            <tbody id="historyTable">
+                <tr><td colspan="5" style="padding:1rem; color:var(--text-soft);">Nenhuma solicitação recente.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Rodapé com manual e avisos (mantido da versão anterior, adaptado) -->
+    <footer class="footer-manual">
+        <div>
+            <h4>📘 Manual do Agente</h4>
+            <ol style="padding-left:1.2rem;">
+                <li>Use a busca rápida para localizar ativos já cadastrados no INPI ou nas bases do governo.</li>
+                <li>Preencha os campos mínimos e clique em "Compilar & Emitir Selo". O sistema gera automaticamente o Registro Mestre e o Selo Digital.</li>
+                <li>Para certidões, informe o ID ou carregue o JSON do registro.</li>
+            </ol>
+        </div>
+        <div>
+            <h4>🏛️ Integração com Órgãos</h4>
+            <ul>
+                <li><strong>INPI:</strong> Consulta automática de situação de patentes.</li>
+                <li><strong>BNDES/FINEP:</strong> Registro válido como dossiê de garantia.</li>
+                <li><strong>CGU:</strong> Trilha de auditoria completa.</li>
+            </ul>
+        </div>
+        <div class="disclaimer">
+            <strong>⚠️ Importante:</strong> Este portal é de uso exclusivo de agentes credenciados. Todas as operações são registradas e auditadas. A concessão de patentes e a aprovação de crédito são atos soberanos dos órgãos competentes.
+        </div>
+        <div style="text-align:right; font-size:0.7rem; grid-column:1/-1;">
+            AVZ PropTech © 2026 · IDEnza ARS · Portal do Agente Público v1.0
+        </div>
+    </footer>
+</div>
+
+<script>
+    (function() {
+        // Simulação de base de ativos pré-cadastrados (como se viessem do INPI/BNDES)
+        const preRegisteredAssets = [
+            { id: "PNAI-2026-00042", name: "Synapse-FX Neural Interface", type: "Patente + Software", owner: "NeuroTech S.A.", patent: "BR 10 2025 012345-6" },
+            { id: "PNAI-2026-00078", name: "Vacina RNAm para Dengue", type: "Patente", owner: "Fiocruz", patent: "BR 11 2025 009876-1" },
+            { id: "PNAI-2026-00112", name: "Plataforma de Logística IA", type: "Software", owner: "LogTech Ltda", patent: "" },
+            { id: "PNAI-2026-00033", name: "Algoritmo de Decodificação Neural", type: "Modelo de IA", owner: "IDEnza Labs", patent: "US 18/542,210" }
+        ];
+
+        // Elementos da busca
+        const searchAsset = document.getElementById('searchAsset');
+        const searchBtn = document.getElementById('searchBtn');
+        const suggestionsBox = document.getElementById('suggestionsBox');
+        const assetName = document.getElementById('assetName');
+        const assetType = document.getElementById('assetType');
+        const owner = document.getElementById('owner');
+        const patentApp = document.getElementById('patentApp');
+
+        // Mostrar sugestões ao digitar
+        function filterAssets(query) {
+            if (!query) return [];
+            return preRegisteredAssets.filter(a => 
+                a.name.toLowerCase().includes(query.toLowerCase()) ||
+                a.id.toLowerCase().includes(query.toLowerCase())
+            );
+        }
+
+        function renderSuggestions(list) {
+            if (list.length === 0) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+            suggestionsBox.innerHTML = list.map(a => 
+                `<div class="suggestion-item" data-id="${a.id}">${a.id} - ${a.name} (${a.owner})</div>`
+            ).join('');
+            suggestionsBox.style.display = 'block';
+        }
+
+        searchAsset.addEventListener('input', function() {
+            const q = this.value.trim();
+            if (q.length >= 2) {
+                const filtered = filterAssets(q);
+                renderSuggestions(filtered);
+            } else {
+                suggestionsBox.style.display = 'none';
+            }
+        });
+
+        // Selecionar uma sugestão
+        suggestionsBox.addEventListener('click', function(e) {
+            if (e.target.classList.contains('suggestion-item')) {
+                const id = e.target.dataset.id;
+                const asset = preRegisteredAssets.find(a => a.id === id);
+                if (asset) {
+                    assetName.value = asset.name;
+                    assetType.value = asset.type;
+                    owner.value = asset.owner;
+                    patentApp.value = asset.patent || '';
+                    searchAsset.value = '';
+                    suggestionsBox.style.display = 'none';
+                }
+            }
+        });
+
+        // Botão de busca manual
+        searchBtn.addEventListener('click', function() {
+            const q = searchAsset.value.trim();
+            if (q.length >= 2) {
+                const filtered = filterAssets(q);
+                renderSuggestions(filtered);
+            }
+        });
+
+        // Registro rápido (compilação automática)
+        const quickRegisterBtn = document.getElementById('quickRegisterBtn');
+        const registerFeedback = document.getElementById('registerFeedback');
+        const historyTable = document.getElementById('historyTable');
+
+        function addToHistory(id, name, type, status) {
+            const row = document.createElement('tr');
+            const now = new Date().toLocaleString('pt-BR');
+            row.innerHTML = `<td>${now}</td><td>${id}</td><td>${name}</td><td>${type}</td><td>${status}</td>`;
+            if (historyTable.children[0]?.cells[0]?.innerText === 'Nenhuma solicitação recente.') {
+                historyTable.innerHTML = '';
+            }
+            historyTable.prepend(row);
+            // Armazena em localStorage
+            const history = JSON.parse(localStorage.getItem('pnai_agent_history') || '[]');
+            history.unshift({ date: now, id, name, type, status });
+            localStorage.setItem('pnai_agent_history', JSON.stringify(history.slice(0,10)));
+        }
+
+        function loadHistory() {
+            const history = JSON.parse(localStorage.getItem('pnai_agent_history') || '[]');
+            if (history.length === 0) return;
+            historyTable.innerHTML = '';
+            history.forEach(h => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${h.date}</td><td>${h.id}</td><td>${h.name}</td><td>${h.type}</td><td>${h.status}</td>`;
+                historyTable.appendChild(row);
+            });
+        }
+
+        quickRegisterBtn.addEventListener('click', function() {
+            const name = assetName.value.trim();
+            if (!name) {
+                registerFeedback.innerHTML = '<span style="color:red;">⚠️ Informe o nome do ativo.</span>';
+                return;
+            }
+            const type = assetType.value;
+            const ownerName = owner.value.trim() || 'Não informado';
+            const patent = patentApp.value.trim();
+
+            // Gera um ID fictício de registro
+            const newId = 'PNAI-' + new Date().getFullYear() + '-' + String(Math.floor(Math.random()*90000)+10000);
+            const timestamp = new Date().toISOString();
+            const fakeSelo = 'SELO-' + Date.now();
+
+            // Cria objeto Registro Mestre simplificado (para feedback)
+            const master = {
+                id: newId,
+                nome: name,
+                tipo: type,
+                titular: ownerName,
+                patente: patent,
+                timestamp,
+                seloDigital: fakeSelo,
+                status: 'ATIVO'
+            };
+
+            // Salva no localStorage como registro recente
+            const registros = JSON.parse(localStorage.getItem('pnai_agent_registros') || '[]');
+            registros.push(master);
+            localStorage.setItem('pnai_agent_registros', JSON.stringify(registros));
+
+            registerFeedback.innerHTML = `
+                ✅ Registro criado com sucesso!<br>
+                <strong>ID:</strong> ${newId}<br>
+                <strong>Selo Digital:</strong> ${fakeSelo}<br>
+                <small>Emolumento de R$ 120,00 debitado automaticamente da conta do órgão.</small>
+            `;
+            addToHistory(newId, name, type, 'Selo emitido');
+            // Limpa campos
+            assetName.value = ''; owner.value = ''; patentApp.value = '';
+        });
+
+        // Certidão e verificação
+        const certId = document.getElementById('certId');
+        const emitCertBtn = document.getElementById('emitCertBtn');
+        const verifyBtn = document.getElementById('verifyBtn');
+        const certOutput = document.getElementById('certOutput');
+        const jsonUpload = document.getElementById('jsonUpload');
+        const uploadVerifyBtn = document.getElementById('uploadVerifyBtn');
+
+        function showCertOutput(content) {
+            certOutput.style.display = 'block';
+            certOutput.textContent = typeof content === 'string' ? content : JSON.stringify(content, null, 2);
+        }
+
+        emitCertBtn.addEventListener('click', function() {
+            const id = certId.value.trim();
+            if (!id) {
+                alert('Informe o ID do Registro Mestre.');
+                return;
+            }
+            // Procura nos registros salvos
+            const registros = JSON.parse(localStorage.getItem('pnai_agent_registros') || '[]');
+            const found = registros.find(r => r.id === id);
+            if (found) {
+                showCertOutput({
+                    certidao: "Certidão de Inteiro Teor",
+                    registro: found,
+                    emitidaEm: new Date().toISOString(),
+                    autenticadaPor: "IDEnza ARS (ICP-Brasil)"
+                });
+            } else {
+                // Simula busca em base externa
+                const pre = preRegisteredAssets.find(a => a.id === id);
+                if (pre) {
+                    showCertOutput({
+                        certidao: "Certidão de Inteiro Teor (base INPI)",
+                        dados: pre,
+                        observacao: "Registro não selado neste portal. Solicite selagem para validade plena.",
+                        emitidaEm: new Date().toISOString()
+                    });
+                } else {
+                    showCertOutput("❌ Registro não encontrado. Verifique o ID.");
+                }
+            }
+            addToHistory(id, 'Certidão emitida', 'Documento', 'Emitida');
+        });
+
+        verifyBtn.addEventListener('click', function() {
+            const id = certId.value.trim();
+            if (!id) {
+                alert('Informe o ID para verificação.');
+                return;
+            }
+            showCertOutput(`🔍 Verificação do Selo para ${id}: Selo íntegro, emitido por IDEnza ARS, data ${new Date().toISOString()}. (Simulação)`) ;
+            addToHistory(id, 'Verificação de selo', 'Auditoria', 'Verificado');
+        });
+
+        uploadVerifyBtn.addEventListener('click', function() {
+            const file = jsonUpload.files[0];
+            if (!file) {
+                alert('Selecione um arquivo JSON.');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const obj = JSON.parse(e.target.result);
+                    if (obj && obj.PNAI_RegistroMestre) {
+                        const hash = obj.PNAI_RegistroMestre.hashIntegridade || 'não informado';
+                        showCertOutput(`✅ Arquivo válido. Registro Mestre detectado.\nHash de integridade: ${hash}\nID: ${obj.PNAI_RegistroMestre.id || 'não informado'}`);
+                        addToHistory(obj.PNAI_RegistroMestre.id || 'upload', 'Verificação por upload', 'Validação', 'Hash conferido');
+                    } else {
+                        showCertOutput("❌ Arquivo JSON não parece ser um Registro Mestre PNAI.");
+                    }
+                } catch (ex) {
+                    showCertOutput("❌ Arquivo inválido ou corrompido.");
+                }
+            };
+            reader.readAsText(file);
+        });
+
+        // Inicializa histórico
+        loadHistory();
+    })();
+</script>
+</body>
+</html>
